@@ -1,0 +1,84 @@
+// android/app/build.gradle
+// This is a complete app-level build.gradle with signing config for release builds.
+
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+// ── Read signing config from key.properties ───────────────────────────────
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+android {
+    namespace "com.habitmove.app"
+    compileSdk flutter.compileSdkVersion
+    ndkVersion flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        applicationId "com.habitmove.app"
+        minSdkVersion 21
+        targetSdkVersion flutter.targetSdkVersion
+        versionCode flutter.versionCode
+        versionName flutter.versionName
+        multiDexEnabled true
+    }
+
+    // ── Signing configs ────────────────────────────────────────────────────
+    signingConfigs {
+        release {
+            keyAlias     keystoreProperties['keyAlias']
+            keyPassword  keystoreProperties['keyPassword']
+            storeFile    keystoreProperties['storeFile']
+                ? file(keystoreProperties['storeFile'])
+                : null
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
+            debuggable true
+        }
+
+        release {
+            // Use release signing if key.properties exists, else fall back to debug
+            signingConfig keystorePropertiesFile.exists()
+                ? signingConfigs.release
+                : signingConfigs.debug
+
+            // Code shrinking & obfuscation (reduces APK size ~30%)
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation 'androidx.multidex:multidex:2.0.1'
+}

@@ -1,0 +1,21 @@
+# android/key.properties
+# ─────────────────────────────────────────────────────────────────────────────
+# IMPORTANT: Never commit this file to version control.
+#            Add 'key.properties' to your .gitignore.
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# Fill in these values after generating your keystore.
+# To generate a keystore run:
+#
+#   keytool -genkey -v \
+#     -keystore android/app/habitmove-release.keystore \
+#     -alias habitmove \
+#     -keyalg RSA -keysize 2048 -validity 10000
+#
+# Or run:  bash build.sh   (it will prompt you and create everything)
+# ─────────────────────────────────────────────────────────────────────────────
+
+storeFile=habitmove-release.keystore
+storePassword=YOUR_KEYSTORE_PASSWORD
+keyAlias=habitmove
+keyPassword=YOUR_KEY_PASSWORD
